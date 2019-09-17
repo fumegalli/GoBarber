@@ -1,13 +1,13 @@
-const {
+import {
   Router
-} = require('express');
+} from 'express';
 
 const routes = new Router();
 
 routes.get('/', (req, res) => {
   return res.json({
-    message: 'Hello'
+    message: 'Hello Mundo'
   })
 });
 
-module.exports = routes;
+export default routes;
