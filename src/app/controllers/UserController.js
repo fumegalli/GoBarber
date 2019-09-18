@@ -8,10 +8,11 @@ class UserController {
       },
     })
 
-    if (userExists)
-      return res.status(404).json({
+    if (userExists) {
+      return res.status(400).json({
         error: 'User already exists',
       })
+    }
 
     const { id, name, email, provider } = await User.create(req.body)
 
@@ -24,8 +25,37 @@ class UserController {
   }
 
   async update(req, res) {
+    const { email, oldPassword } = req.body
+
+    const user = await User.findByPk(req.userId)
+
+    if (email && email !== user.email) {
+      const userExists = await User.findOne({
+        where: {
+          email,
+        },
+      })
+
+      if (userExists) {
+        return res.status(400).json({
+          error: 'Email already in use',
+        })
+      }
+    }
+
+    if (oldPassword && !(await user.checkPassword(oldPassword))) {
+      return res.status(400).json({
+        error: 'Password does not match',
+      })
+    }
+
+    const { id, name, provider } = await user.update(req.body)
+
     return res.json({
-      ok: req.userId,
+      id,
+      name,
+      email,
+      provider,
     })
   }
 }
