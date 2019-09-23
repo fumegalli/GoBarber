@@ -22,6 +22,7 @@ routes.put('/users', UserController.update)
 
 routes.get('/providers', ProviderController.get)
 
+routes.get('/appointments', AppointmentController.get)
 routes.post('/appointments', AppointmentController.create)
 
 routes.post('/files', upload.single('file'), FileController.create)
