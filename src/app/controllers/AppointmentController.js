@@ -7,7 +7,8 @@ import File from '../models/File'
 import User from '../models/User'
 import Notification from '../schemas/Notification'
 
-import Mail from '../../lib/Mail'
+import CancellationMail from '../jobs/CancellationMail'
+import Queue from '../../lib/Queue'
 
 class AppointmentControler {
   async get(req, res) {
@@ -148,11 +149,8 @@ class AppointmentControler {
 
     await appointment.save()
 
-    const { name, email } = appointment.provider
-    await Mail.sendMail({
-      to: `${name} <${email}>`,
-      subject: 'Agendamento cancelado',
-      text: 'Você tem um novo cancelamento',
+    await Queue.add(CancellationMail.key, {
+      appointment,
     })
 
     return res.status(200).json(appointment)
